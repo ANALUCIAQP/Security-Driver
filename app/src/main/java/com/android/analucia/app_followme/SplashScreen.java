@@ -16,7 +16,7 @@ public class SplashScreen extends ActionBarActivity {
     public static final int delay = 2;
     private ProgressBar pbprogreso;
 
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
