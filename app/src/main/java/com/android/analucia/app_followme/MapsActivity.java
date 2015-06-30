@@ -99,7 +99,7 @@ public class MapsActivity extends FragmentActivity {
             showCurrentLocation(location);
         }
     }
-    // prova git
+
     private void showCurrentLocation(Location location){
 
         mMap.clear();
