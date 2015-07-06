@@ -1,11 +1,18 @@
 package com.android.analucia.app_followme;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -16,12 +23,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private Location location;
+    private RecuperoInfoMeteo infoMeteo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+       infoMeteo = new RecuperoInfoMeteo(this);
+       eseguiBtnMeteo();
+
+       Button btnmeteo = (Button) findViewById(R.id.btn3);
+       btnmeteo.setTextAppearance(this, android.R.style.TextAppearance_Large);
+       btnmeteo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showPopUp2();
+            }
+        });
+
     }
 
     @Override
@@ -92,7 +115,9 @@ public class MapsActivity extends FragmentActivity {
         locationManager.requestLocationUpdates(provider, 2000, 0, locationListener);
 
         // Getting initial Location
-        Location location = locationManager.getLastKnownLocation(provider);
+         location = locationManager.getLastKnownLocation(provider);
+
+
         // Show the initial location
         if(location != null)
         {
@@ -114,6 +139,44 @@ public class MapsActivity extends FragmentActivity {
 
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 18));
+    }
+
+
+
+    private void eseguiBtnMeteo()
+    {
+
+        String latitudine = Double.toString(location.getLatitude()); // returns latitude
+        String longitudine = Double.toString(location.getLongitude()); // returns longitude
+        // Toast.makeText(this, "Your Location is - \nLat: " + latitudine + "\nLong: " + longitudine, Toast.LENGTH_LONG).show();
+
+
+        infoMeteo.changeLocation(latitudine, longitudine);
+    }
+
+    private void showPopUp2() {
+
+
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        helpBuilder.setView(infoMeteo.onCreateLayout(inflater));
+        eseguiBtnMeteo();
+
+        helpBuilder.setNegativeButton("Chiudi", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+
+
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
     }
 
 
